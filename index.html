@@ -49,7 +49,8 @@ main{position:relative;z-index:1}
 .navlinks a{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600;font-size:14px}
 .navlinks a:hover,.navlinks a.active{background:var(--card2)}
 .themepill{border:1px solid transparent;background:linear-gradient(var(--card2),var(--card2)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:var(--text);border-radius:999px;padding:8px 11px;font-size:16px;line-height:1}
-.join{background:linear-gradient(#0b0d12,#0b0d12) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:#fff!important;border:1px solid transparent;border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;white-space:nowrap;transition:transform .15s,box-shadow .15s}
+.join{background:linear-gradient(#0b0d12,#0b0d12) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:#fff!important;border:1px solid transparent;border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;white-space:nowrap;transition:transform .15s,box-shadow .15s;display:inline-flex;align-items:center;gap:8px}
+.klogo{width:20px;height:20px;border-radius:5px;display:block;flex:0 0 auto}
 .join:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
 [data-theme="light"] .join{background:#14161c}
 main{padding-top:92px}
@@ -112,32 +113,67 @@ main{padding-top:92px}
 .group-body{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .5s cubic-bezier(.22,1,.36,1),opacity .35s ease}
 .group-body>div{overflow:hidden;min-height:0}
 .group.collapsed .group-body{grid-template-rows:0fr;opacity:0}
-/* Detail */
-.crumb{color:var(--muted);font-size:14px;margin:10px 0 22px}
+/* Detail — editorial scientific article layout (detail pages only; homepage untouched) */
+html,body{overflow-x:clip}
+.crumb{color:var(--muted);font-size:13px;margin:0 0 26px}
 .crumb a{color:inherit;text-decoration:none}.crumb a:hover{text-decoration:underline}
-.detailtop{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:start}
-.bigthumb{width:300px;height:300px;border-radius:22px;display:grid;place-items:center;position:sticky;top:100px}
-.detailtop h1{font-size:clamp(38px,5vw,60px);line-height:1.02;letter-spacing:-.03em;margin:0 0 14px}
-.meta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}
-.metabox{border:1px solid transparent;border-radius:14px;padding:14px 16px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box}
-.metabox b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
-section.block{margin:38px 0}
-section.block h2{font-size:28px;letter-spacing:-.02em;margin:0 0 10px}
-.note{border-left:4px solid var(--blue2);background:var(--card);border-radius:0 12px 12px 0;padding:14px 18px;color:var(--muted)}
+.crumb [aria-current]{color:var(--text)}
+.intro{position:relative;left:50%;transform:translateX(-50%);width:100vw;background:#16233d;color:#eef0f4;padding:28px 0 40px;margin:-10px 0 0}
+[data-theme="light"] .intro{background:#e3edf7;color:#1b1e26}
+.intro-inner{width:min(1180px,calc(100% - 40px));margin:0 auto}
+.intro .crumb{color:#9aa8bd}
+[data-theme="light"] .intro .crumb{color:#5f6673}
+.intro .crumb [aria-current]{color:#eef0f4}
+[data-theme="light"] .intro .crumb [aria-current]{color:#1b1e26}
+.detailtop{display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:center}
+.bigthumb{width:280px;height:280px;border-radius:22px;display:grid;place-items:center}
+.bigthumb svg{width:280px;height:280px}
+.detailtop h1{font-size:clamp(36px,4.5vw,42px);line-height:1.05;letter-spacing:-.02em;margin:0 0 10px}
+.detailtop .intro-desc{font-size:17px;line-height:1.65;margin:0 0 12px;max-width:640px}
+.detailtop .brandsline{font-size:14px;color:#b9c2d0;margin:0 0 8px}
+[data-theme="light"] .detailtop .brandsline{color:#4c5563}
+.detailtop .classline{font-size:13px;color:#9aa8bd;margin:0}
+[data-theme="light"] .detailtop .classline{color:#5f6673}
+/* Depth selector — General View only: no Nurse/PA content was supplied, so no extra tabs are invented */
+.viewswitch{display:flex;align-items:center;gap:12px;width:min(720px,100%);margin:28px auto 0}
+.viewpill{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 16px;font-weight:700;font-size:13px}
+.viewswitch .viewnote{font-size:12px;color:var(--muted)}
+/* Narrow centered article */
+.article{width:min(720px,100%);margin:0 auto;padding-bottom:20px}
+.article p{font-size:16px;line-height:1.7;margin:0 0 16px}
+.article p.small,.article .small{font-size:13px;line-height:1.6}
+section.block{margin:44px 0}
+section.block h2{font-size:28px;letter-spacing:-.02em;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+section.block h3{font-size:19px;margin:28px 0 10px}
+.note{border-left:4px solid var(--blue2);background:var(--card);border-radius:0 12px 12px 0;padding:14px 18px;color:var(--muted);font-size:14px;line-height:1.6}
+.refs{font-size:13px;line-height:1.6;color:var(--muted)}
 .refs li{margin-bottom:8px}
-/* Mechanism animation */
-.mech{border:1px solid transparent;border-radius:18px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;padding:20px}
+.backlink{width:min(720px,100%);margin:8px auto 0}
+/* Tests along the way — only rendered when the supplied description names a monitored item */
+.testitem{border:1px solid var(--line);border-radius:12px;padding:0;margin:0 0 10px;background:transparent}
+.testitem summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:15px;list-style:none}
+.testitem summary::-webkit-details-marker{display:none}
+.testitem summary::after{content:"+";float:right;color:var(--muted)}
+.testitem[open] summary::after{content:"×"}
+.testitem p{padding:0 16px 16px;font-size:14px;color:var(--muted)}
+/* Mechanism animation — editorial player */
+.mech{border:1px solid var(--line);border-radius:14px;background:#16181d;padding:20px 22px 18px}
+[data-theme="light"] .mech{background:#ffffff}
+.mech-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
 .mech .stepnode.on circle{animation:stepPulse 2.6s ease-in-out infinite}
 @keyframes stepPulse{0%,100%{opacity:1}50%{opacity:.72}}
-.mech svg{width:100%;height:auto;display:block;background:var(--bg2);border-radius:12px}
+.mech svg{width:100%;height:auto;display:block;border-radius:8px}
 .mech .dot{transition:opacity .3s}
 .mech .stepnode{transition:opacity .3s}
 .mech .stepnode.dim{opacity:.28}
 .mech .stepnode.on{opacity:1}
-.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}
-.controls button{border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:999px;padding:9px 16px;font-weight:700}
-.controls button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-.cap{flex:1;min-width:220px;color:var(--muted)}
+.mech-foot{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.mech-cap{flex:1;min-width:240px;font-size:14px;line-height:1.6;color:var(--muted)}
+.mech-cap b{color:var(--text)}
+.mech-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mech-controls button{border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:999px;padding:10px 16px;font-weight:700;font-size:13px;min-height:42px}
+.mech-controls button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.mech-count{color:var(--muted);font-weight:700;font-size:13px;white-space:nowrap}
 /* Modal */
 .overlay{position:fixed;inset:0;background:rgba(5,7,14,.58);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 16px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s ease}
 .overlay.open{opacity:1;visibility:visible;pointer-events:auto}
@@ -161,7 +197,8 @@ footer a{color:var(--muted);text-decoration:none}
   .hero{padding:30px 22px 22px}.hero h1{font-size:40px}
   .row{grid-template-columns:40px 72px 1fr;gap:14px}
   .thumb{width:72px;height:72px}
-  .detailtop{grid-template-columns:1fr}.bigthumb{width:100%;height:240px;position:static}
+  .detailtop{grid-template-columns:1fr;gap:20px}.bigthumb{width:100%;height:240px}.bigthumb svg{width:240px;height:240px}
+  .mech-foot{flex-direction:column}.article p{font-size:15px}
   .meta{grid-template-columns:1fr}
   .brand{font-size:15px}.join{padding:8px 12px;font-size:13px}
   main{padding-top:84px}
@@ -182,17 +219,15 @@ footer a{color:var(--muted);text-decoration:none}
 <div class="navwrap"><nav class="nav" aria-label="Main navigation">
   <a class="brand" href="#/" id="brandLink">Pushing <span>P</span> Community</a>
   <div class="navlinks">
-    <a class="navlink" href="#/journal" id="journalLink">Journal Club</a>
-    <a class="navlink active" href="#/" id="dbLink">Compound Database</a>
     <button class="themepill" id="themeBtn" type="button" aria-label="Toggle dark and light mode" title="Toggle theme">🌙</button>
-    <a class="join" href="https://klixey.com/shop/" target="_blank" rel="noopener">Join Community ↗</a>
+    <a class="join" href="https://klixey.com/shop/" target="_blank" rel="noopener"><img class="klogo" src="data:image/png;base64,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" alt="Klixey" width="20" height="20">Join Community ↗</a>
   </div>
 </nav></div>
 <main><div class="wrap">
   <div id="view"></div>
   <footer>
     <div>Educational only. Not medical advice.</div>
-    <div><a href="#/">Compound Database</a> &nbsp;·&nbsp; <a href="#/journal">Journal Club</a> &nbsp;·&nbsp; <a href="https://klixey.com/shop/" target="_blank" rel="noopener">Join Community</a></div>
+    <div><a href="https://klixey.com/shop/" target="_blank" rel="noopener">Join Community</a></div>
     <div>Pushing P Community</div>
   </footer>
 </div></main>
@@ -390,10 +425,10 @@ function mechSteps(c){
 let mech={steps:[],i:0,playing:false,timer:null};
 function mechSVG(c,steps){
   const n=steps.length, W=640, gap=W/(n+1);
-  let nodes="", dots="";
-  steps.forEach((s,i)=>{ const x=Math.round(gap*(i+1)); nodes+=`<g class="stepnode ${i===0?"on":"dim"}" data-node="${i}"><circle cx="${x}" cy="90" r="30" fill="${pal(c)[(i+1)%3]}"/><text x="${x}" y="96" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">${i+1}</text><text x="${x}" y="150" text-anchor="middle" font-size="13" fill="currentColor">${esc(s.t.replace(/^Step \d+ — /,""))}</text></g>`; });
-  dots=`<circle class="dot" r="7" fill="#e8ecf2"><animateMotion dur="4s" repeatCount="indefinite" path="M ${gap} 90 L ${W-gap} 90"/></circle><circle class="dot" r="5" fill="#8fa8c8"><animateMotion dur="4s" begin="2s" repeatCount="indefinite" path="M ${gap} 90 L ${W-gap} 90"/></circle>`;
-  return `<svg id="mechSvg" viewBox="0 0 640 190" aria-label="Mechanism animation for ${esc(c.n)}"><line x1="${gap}" y1="90" x2="${W-gap}" y2="90" stroke="#888" stroke-width="2" stroke-dasharray="7 6"/>${nodes}${dots}</svg>`;
+  let nodes="";
+  steps.forEach((s,i)=>{ const x=Math.round(gap*(i+1)); nodes+=`<g class="stepnode ${i===0?"on":"dim"}" data-node="${i}"><circle cx="${x}" cy="80" r="26" fill="none" stroke="${pal(c)[(i+1)%3]}" stroke-width="2"/><circle cx="${x}" cy="80" r="26" fill="${pal(c)[(i+1)%3]}" fill-opacity=".14"/><text x="${x}" y="86" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor">${i+1}</text><text x="${x}" y="136" text-anchor="middle" font-size="12" fill="currentColor">${esc(s.t.replace(/^Step \d+ — /,""))}</text></g>`; });
+  const dots=`<circle class="dot" r="6" fill="#e8ecf2"><animateMotion dur="4s" repeatCount="indefinite" path="M ${gap} 80 L ${W-gap} 80"/></circle><circle class="dot" r="4" fill="#8fa8c8"><animateMotion dur="4s" begin="2s" repeatCount="indefinite" path="M ${gap} 80 L ${W-gap} 80"/></circle>`;
+  return `<svg id="mechSvg" viewBox="0 0 640 165" role="img" aria-label="Mechanism animation for ${esc(c.n)}"><line x1="${gap}" y1="80" x2="${W-gap}" y2="80" stroke="#888" stroke-width="1.5" stroke-dasharray="6 5"/>${nodes}${dots}</svg>`;
 }
 function setMechStep(i){
   const st=mech.steps; if(!st.length) return;
@@ -413,6 +448,7 @@ function bindMech(c){
   document.getElementById("mechRestart").onclick=()=>{ if(svg) svg.setCurrentTime(0); setMechStep(0)};
   playBtn.onclick=()=>{ mech.playing=!mech.playing; playBtn.textContent=mech.playing?"⏸ Pause":"▶ Play"; if(svg){ mech.playing?svg.unpauseAnimations():svg.pauseAnimations(); } mechAuto(); };
   setMechStep(0);
+  if(svg && window.matchMedia("(prefers-reduced-motion: reduce)").matches){ svg.pauseAnimations(); }
 }
 
 /* ============ Views ============ */
@@ -446,33 +482,66 @@ function listView(){
 function journalView(){
   view.innerHTML=`<section class="journal"><h1 style="font-size:38px;letter-spacing:-.02em;margin:0 0 10px">Journal Club</h1><p>No Journal Club articles were supplied with this database build, so no articles, links, or summaries have been invented here.</p><p>When you supply Journal Club content, it can be added to this page without changing the compound database.</p><p><a href="#/">← Back to Compound Database</a></p></section>`;
 }
+/* Monitoring items — only items named in that compound's own supplied description.
+   Nothing here adds a test the summary does not mention. Compounds not listed get no "Tests along the way" section. */
+const MONITOR={
+ "acyclovir":[
+   {t:"Kidney function",d:"The supplied summary notes acyclovir can harm the kidneys, especially when given IV."},
+   {t:"Hydration and urine output",d:"Good hydration matters, according to the supplied summary."}],
+ "gentamicin":[
+   {t:"Kidney function",d:"The supplied summary notes gentamicin can damage the kidneys, so kidney function is monitored."},
+   {t:"Hearing",d:"The supplied summary notes it can damage the inner ear, sometimes permanently, so hearing is monitored."},
+   {t:"Drug blood levels",d:"Peak and trough blood levels are monitored, according to the supplied summary."}],
+ "vancomycin":[
+   {t:"Kidney function",d:"Kidney function needs watching, according to the supplied summary."},
+   {t:"Hearing",d:"Hearing needs watching, according to the supplied summary."},
+   {t:"Drug blood levels",d:"Blood levels need watching, according to the supplied summary."}],
+ "lithium":[
+   {t:"Blood lithium levels",d:"It has a narrow margin between helpful and toxic levels, so blood levels are checked regularly, according to the supplied summary."}],
+ "phenytoin":[
+   {t:"Blood levels",d:"Blood levels guide dosing because small dose changes can cause big level changes, according to the supplied summary."}],
+ "magnesium-sulfate":[
+   {t:"Reflexes",d:"Reflexes are checked, according to the supplied summary; too much magnesium causes loss of reflexes."},
+   {t:"Breathing",d:"Breathing is checked, according to the supplied summary; too much magnesium slows breathing."},
+   {t:"Urine output",d:"Urine output is checked, according to the supplied summary."},
+   {t:"Magnesium levels",d:"Magnesium levels are checked, according to the supplied summary."}],
+ "oxytocin":[
+   {t:"Uterine contractions",d:"It is given by pump with continuous monitoring of contractions, according to the supplied summary."},
+   {t:"Baby's heart rate",d:"It is given by pump with continuous monitoring of the baby's heart rate, according to the supplied summary."}],
+ "valproic-acid":[
+   {t:"Liver tests",d:"Liver tests are checked, according to the supplied summary; its boxed warning covers fatal liver failure."}],
+ "warfarin":[
+   {t:"INR blood tests",d:"Regular INR blood tests guide the dose, according to the supplied summary."}]
+};
 function detailView(c){
   const steps=mechSteps(c);
   const genericNote = SPECIFIC[c.id] ? "" : `<p class="note">Specific receptor-level mechanism steps have not yet been compiled or verified for this compound in the supplied data. The animation below shows only the general flow described in the summary, not a proven pathway.</p>`;
-  view.innerHTML=`<nav class="crumb" aria-label="Breadcrumb"><a href="#/">Compound Database</a> → <a href="#/">All Compounds</a> → ${esc(c.n)}</nav>
-  <div class="detailtop"><div class="bigthumb">${iconSVG(c,220,groupKeyOf(c))}</div><div>
-    <h1>${esc(c.n)}${badge(c)}</h1><p style="font-size:19px">${esc(c.d)}</p>
-    ${c.b?`<p><b>Alternative / brand names:</b> ${brandLine(c)}</p>`:"<p><b>Alternative / brand names:</b> None supplied.</p>"}
-    <div class="meta">
-      <div class="metabox"><b>Compound classification</b>${c.s?esc(c.s):"Not specified in supplied data"}</div>
-      <div class="metabox"><b>Primary biological targets</b>${SPECIFIC[c.id]?"See “How it works” below.":"Not specified in supplied data"}</div>
-      <div class="metabox"><b>Regulatory status</b>${c.s?esc(c.s):"Not specified as a separate flag in the supplied data"}</div>
-      <div class="metabox"><b>Database position</b>${c.num} of ${COMPOUNDS.length}</div>
-    </div>
-  </div></div>
-  <section class="block"><h2>1. How it works</h2>${genericNote}<div class="mech" id="mechBox">${mechSVG(c,steps)}<div class="controls"><button type="button" id="mechPrev">← Previous step</button><button type="button" class="primary" id="mechPlay">▶ Play</button><button type="button" id="mechNext">Next step →</button><button type="button" id="mechRestart">↺ Restart</button><span class="cap" id="mechCap"></span><span id="mechCount" style="color:var(--muted);font-weight:700"></span></div></div></section>
+  const tests=MONITOR[c.id]||[];
+  const testsHtml=tests.length?`<section class="block"><h2>5. Tests along the way</h2><p class="small">Tap an item to see why it is monitored. Only items named in this compound's own supplied summary are listed.</p>${tests.map(t=>`<details class="testitem"><summary>${esc(t.t)}</summary><p>${esc(t.d)}</p></details>`).join("")}</section>`:"";
+  const regN=tests.length?6:5, refN=tests.length?7:6;
+  view.innerHTML=`<section class="intro"><div class="intro-inner"><nav class="crumb" aria-label="Breadcrumb"><a href="#/">Compound Database</a> → <a href="#/">All Compounds</a> → <span aria-current="page">${esc(c.n)}</span></nav>
+  <div class="detailtop"><div class="bigthumb">${iconSVG(c,280,groupKeyOf(c))}</div><div>
+    <h1>${esc(c.n)}</h1><p class="intro-desc">${esc(c.d)}</p>
+    ${c.b?`<p class="brandsline">${c.b.startsWith("No current")?esc(c.b):`Alternative / brand names: ${esc(c.b)}`}</p>`:""}
+    ${c.s?`<p class="classline">Regulatory classification: ${esc(c.s)}</p>`:""}
+  </div></div></div></section>
+  <div class="viewswitch"><span class="viewpill" aria-current="true">General View</span><span class="viewnote">Nurse and PA views are not shown — distinct professional-level content was not supplied for this compound, so none has been invented.</span></div>
+  <article class="article">
+  <section class="block"><h2>1. How it works</h2>${genericNote}<div class="mech" id="mechBox"><p class="mech-label">Mechanism of action · ${esc(c.n)}</p>${mechSVG(c,steps)}<div class="mech-foot"><span class="mech-cap" id="mechCap"></span><span class="mech-controls"><button type="button" id="mechPrev">← Previous</button><button type="button" class="primary" id="mechPlay">▶ Play</button><button type="button" id="mechNext">Next →</button><button type="button" id="mechRestart">↺ Restart</button><span class="mech-count" id="mechCount"></span></span></div></div></section>
   <section class="block"><h2>2. What it's for</h2><p>${esc(c.d)}</p></section>
   <section class="block"><h2>3. Where the evidence stands</h2><p class="note">Evidence details beyond the supplied summary have not yet been compiled or verified for this compound. No studies, statistics, or results have been added beyond the supplied description.</p><p>${esc(c.d)}</p></section>
-  <section class="block"><h2>4. Side effects</h2><p class="note">Side-effect information beyond what appears in the supplied summary has not yet been compiled separately for this compound. Check the summary above for any risks mentioned there, and talk to a licensed clinician.</p></section>
-  <section class="block"><h2>5. Regulatory status</h2><p>${c.s?`<b>${esc(c.s)}.</b> This flag is exactly as supplied for this compound.`:"Regulatory status was not specified as a separate flag in the supplied data for this compound."}</p></section>
-  <section class="block"><h2>6. Scientific references</h2><p class="note">No separate reference list was supplied with this compound. No sources or links have been invented here.</p><ul class="refs"><li>Supplied compound description (see “What it's for” above).</li></ul></section>
-  <p><a href="#/">← Back to all compounds</a></p>`;
+  <section class="block"><h2>4. Side effects</h2><p class="note">Side-effect information beyond what appears in the supplied summary has not yet been compiled separately for this compound, so common and serious effects are not split into separate lists here. Check the summary above for any risks mentioned there, and talk to a licensed clinician.</p></section>
+  ${testsHtml}
+  <section class="block"><h2>${regN}. Regulatory status</h2><p>${c.s?`<b>${esc(c.s)}.</b> This flag is exactly as supplied for this compound.`:"Regulatory status was not specified as a separate flag in the supplied data for this compound."}</p></section>
+  <section class="block"><h2>${refN}. Scientific references</h2><p class="note">No separate reference list was supplied with this compound. No sources or links have been invented here.</p><ul class="refs"><li>Supplied compound description (see “What it's for” above).</li></ul></section>
+  </article>
+  <p class="backlink"><a href="#/">← Back to all compounds</a></p>`;
   bindMech(c);
 }
 function render(){
   const h=location.hash||"#/";
-  document.getElementById("dbLink").classList.toggle("active",h==="#/"||h.startsWith("#/compound/"));
-  document.getElementById("journalLink").classList.toggle("active",h==="#/journal");
+  const dbLink=document.getElementById("dbLink"); if(dbLink) dbLink.classList.toggle("active",h==="#/"||h.startsWith("#/compound/"));
+  const journalLink=document.getElementById("journalLink"); if(journalLink) journalLink.classList.toggle("active",h==="#/journal");
   if(h==="#/journal"){ journalView(); }
   else if(h.startsWith("#/compound/")){ const c=COMPOUNDS.find(x=>x.id===h.replace("#/compound/","")); if(c) detailView(c); else listView(); }
   else listView();
