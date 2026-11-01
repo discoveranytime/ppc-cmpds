@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pushing P Community — Compound Database</title>
+<meta name="description" content="A deep dive into every compound we track. Educational only. Not medical advice.">
+<style>
+:root{
+  --bg:#0e1118; --bg2:#141822; --card:#171c27; --card2:#1e2432; --line:#2a3142;
+  --text:#eef0f4; --muted:#98a1b0; --blue:#4a6fa5; --blue2:#7d97bd; --hero:#1c2536;
+  --ivory:#f4f2ec; --paper:#fbfaf6; --ink:#1b1e26; --inkmut:#5f6673; --lineL:#ddd8cc;
+  --grad-text:linear-gradient(100deg,#7dd3fc 0%,#2dd4bf 50%,#fdba74 100%);
+}
+[data-theme="light"]{ --bg:#f4f2ec; --bg2:#eceef2; --card:#fbfaf6; --card2:#ffffff; --line:#ddd8cc; --text:#1b1e26; --muted:#5f6673; --blue:#3d5f8a; --blue2:#4a6fa5; --hero:#dfe6ee; --grad-text:linear-gradient(100deg,#0284c7 0%,#0f766e 50%,#ea580c 100%); }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;line-height:1.55}
+/* 60lbs-in-4-months signature: sky → teal → orange gradient, gradient borders, soft amber/cyan glow */
+.grad{background:linear-gradient(100deg,#38bdf8 0%,#2dd4bf 50%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.gradborder{border:1px solid transparent!important;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8 0%,#2dd4bf 50%,#fb923c 100%) border-box!important}
+.glow:hover{box-shadow:0 10px 30px rgba(56,189,248,.16),0 10px 30px rgba(251,146,60,.10)}
+a{color:var(--blue2)} [data-theme="light"] a{color:var(--blue)}
+button{font:inherit;cursor:pointer}
+button,.join,.navlinks a,.row,.res,.searchbar,.themepill{transition:transform .22s ease,background-color .22s ease,box-shadow .22s ease,border-color .22s ease,opacity .22s ease}
+button:active,.join:active{transform:scale(.96)}
+.row:active,.res:active{transform:scale(.985)}
+.themepill:active{transform:rotate(24deg) scale(.94)}
+:focus-visible{outline:3px solid var(--blue2);outline-offset:2px;border-radius:6px}
+/* PUSHING P community watermark — fixed scrolling tracks behind content, exactly as on the 60 lbs in 4 months page */
+#bgtext{position:fixed;inset:-10% -20%;z-index:0;pointer-events:none;overflow:hidden;display:flex;flex-direction:column;justify-content:space-around;transform:rotate(-14deg);opacity:.14;user-select:none}
+.bgline{overflow:hidden}
+.bgtrack{display:flex;width:max-content;animation:bgscroll var(--spd,120s) linear infinite}
+.bgline.rev .bgtrack{animation-direction:reverse}
+.bgtrack span{white-space:nowrap;font-weight:800;line-height:1;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes bgscroll{to{transform:translateX(-50%)}}
+[data-theme="light"] #bgtext{opacity:.12}
+.ambdots{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.ambdot{position:absolute;border-radius:50%;animation:twinkle 3.5s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.3;transform:scale(.8)}to{opacity:.65;transform:scale(1.15)}}
+main{position:relative;z-index:1}
+.navwrap{z-index:50}
+/* Nav */
+.navwrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);width:min(1180px,calc(100% - 28px));z-index:50}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid transparent;border-radius:999px;padding:10px 12px 10px 20px;box-shadow:0 12px 34px rgba(0,0,0,.28);background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box}
+.brand{font-weight:800;letter-spacing:-.02em;white-space:nowrap;text-decoration:none;color:var(--text);font-size:17px}
+.brand span{background:linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.navlinks{display:flex;gap:6px;align-items:center}
+.navlinks a{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600;font-size:14px}
+.navlinks a:hover,.navlinks a.active{background:var(--card2)}
+.themepill{border:1px solid transparent;background:linear-gradient(var(--card2),var(--card2)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:var(--text);border-radius:999px;padding:8px 11px;font-size:16px;line-height:1}
+.join{background:linear-gradient(#0b0d12,#0b0d12) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:#fff!important;border:1px solid transparent;border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;white-space:nowrap;transition:transform .15s,box-shadow .15s}
+.join:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+[data-theme="light"] .join{background:#14161c}
+main{padding-top:92px}
+.wrap{width:min(1180px,calc(100% - 40px));margin:0 auto}
+/* Hero */
+.hero{background-color:#1c2536;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:34px 34px;color:#eef0f4;border:1px solid #2a3142;border-radius:22px;padding:44px 40px 30px;overflow:hidden;position:relative}
+.hero::after{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c)}
+[data-theme="light"] .hero{background-color:#dfe6ee;background-image:linear-gradient(rgba(61,95,138,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(61,95,138,.07) 1px,transparent 1px);color:#1b1e26}
+.hero h1{font-size:clamp(36px,5.2vw,64px);line-height:1.02;letter-spacing:-.03em;margin:0 0 14px;max-width:760px}
+.hero p{margin:0 0 22px;color:#b9c2d0;max-width:720px;font-size:17px}
+[data-theme="light"] .hero p{color:#4c5563}
+.marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.mtrack{display:flex;gap:18px;width:max-content;animation:scroll 46s linear infinite}
+.marquee:hover .mtrack{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.mtile{width:92px;height:92px;border-radius:18px;flex:0 0 auto;display:grid;place-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.22)}
+[data-theme="light"] .mtile{background:rgba(255,255,255,.55);border-color:rgba(61,95,138,.28)}
+/* Search bar */
+.searchbar{margin:22px 0 8px;display:flex;align-items:center;gap:12px;border:1px solid transparent;border-radius:14px;padding:14px 18px;cursor:pointer;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box}
+.searchbar:hover{box-shadow:0 10px 30px rgba(56,189,248,.16),0 10px 30px rgba(251,146,60,.10)}
+.searchbar:focus-within{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(125,151,189,.18);transform:translateY(-1px)}
+.searchbar input{flex:1;border:0;background:transparent;color:var(--text);font-size:17px;outline:none}
+.searchbar input::placeholder{color:var(--muted)}
+.kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 8px;color:var(--muted);font-size:12px;background:var(--card2)}
+/* List */
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:34px 0 10px}
+.sechead h2{font-size:34px;letter-spacing:-.02em;margin:0}
+.count{color:var(--muted);font-weight:600}
+.row{display:grid;grid-template-columns:56px 96px 1fr;gap:20px;align-items:start;padding:20px 6px;border-top:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit}
+.row:hover{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(56,189,248,.14),0 10px 30px rgba(251,146,60,.08)}
+.num{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700;padding-top:8px}
+.thumb{width:96px;height:96px;border-radius:16px;display:grid;place-items:center;overflow:hidden}
+.thumb svg{width:100%;height:100%;display:block;animation:molSway 6s ease-in-out infinite alternate;animation-delay:var(--molDelay,0s);transform-origin:center}
+.mtile svg,.bigthumb svg{animation:molSway 6s ease-in-out infinite alternate;transform-origin:center}
+@keyframes molSway{from{transform:translateY(-1.5px) rotate(-1.5deg)}to{transform:translateY(1.5px) rotate(1.5deg) scale(1.02)}}
+.thumb{transition:transform 1.1s cubic-bezier(.22,1,.36,1)}
+.thumb.flipped{transform:rotate(180deg)}
+.row h3{margin:0 0 4px;font-size:21px;letter-spacing:-.01em}
+.row p{margin:0;color:var(--muted)}
+.brands{font-size:13px;color:var(--muted);margin-top:6px}
+.badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:3px 9px;margin-left:8px;vertical-align:middle}
+.badge.warn{color:#d9a86a;border-color:#6b4f2a;background:rgba(217,168,106,.12)}
+.badge.inv{color:#9db4cf;border-color:#3a4f6b;background:rgba(125,151,189,.14)}
+/* Alphabet groups — smooth expand / collapse */
+.grouptools{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 4px}
+.grouptools button{border:1px solid transparent;background:linear-gradient(var(--card2),var(--card2)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:var(--text);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13px}
+.group{margin-top:22px}
+.grouphead{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;border:1px solid transparent;border-radius:14px;padding:14px 18px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;color:var(--text)}
+.grouphead .gletter{font-size:26px;font-weight:900;letter-spacing:-.01em}
+.grouphead .gcount{color:var(--muted);font-weight:600;font-size:14px}
+.grouphead .chev{font-size:18px;color:var(--muted);transition:transform .4s cubic-bezier(.22,1,.36,1)}
+/* Alphabetical tiles: sky blue and deep blue borders alternating A → Z (tile itself stays card-colored) */
+.grouphead.sky{background:var(--card);border:2px solid #38bdf8;color:var(--text)}
+.grouphead.sky .gcount{color:var(--muted)}
+.grouphead.sky .chev{color:var(--muted)}
+.grouphead.deep{background:var(--card);border:2px solid #1e3a8a;color:var(--text)}
+.grouphead.deep .gcount{color:var(--muted)}
+.grouphead.deep .chev{color:var(--muted)}
+.group.collapsed .chev{transform:rotate(-90deg)}
+.group-body{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .5s cubic-bezier(.22,1,.36,1),opacity .35s ease}
+.group-body>div{overflow:hidden;min-height:0}
+.group.collapsed .group-body{grid-template-rows:0fr;opacity:0}
+/* Detail */
+.crumb{color:var(--muted);font-size:14px;margin:10px 0 22px}
+.crumb a{color:inherit;text-decoration:none}.crumb a:hover{text-decoration:underline}
+.detailtop{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:start}
+.bigthumb{width:300px;height:300px;border-radius:22px;display:grid;place-items:center;position:sticky;top:100px}
+.detailtop h1{font-size:clamp(38px,5vw,60px);line-height:1.02;letter-spacing:-.03em;margin:0 0 14px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}
+.metabox{border:1px solid transparent;border-radius:14px;padding:14px 16px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box}
+.metabox b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+section.block{margin:38px 0}
+section.block h2{font-size:28px;letter-spacing:-.02em;margin:0 0 10px}
+.note{border-left:4px solid var(--blue2);background:var(--card);border-radius:0 12px 12px 0;padding:14px 18px;color:var(--muted)}
+.refs li{margin-bottom:8px}
+/* Mechanism animation */
+.mech{border:1px solid transparent;border-radius:18px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box;padding:20px}
+.mech .stepnode.on circle{animation:stepPulse 2.6s ease-in-out infinite}
+@keyframes stepPulse{0%,100%{opacity:1}50%{opacity:.72}}
+.mech svg{width:100%;height:auto;display:block;background:var(--bg2);border-radius:12px}
+.mech .dot{transition:opacity .3s}
+.mech .stepnode{transition:opacity .3s}
+.mech .stepnode.dim{opacity:.28}
+.mech .stepnode.on{opacity:1}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}
+.controls button{border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:999px;padding:9px 16px;font-weight:700}
+.controls button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.cap{flex:1;min-width:220px;color:var(--muted)}
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(5,7,14,.58);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 16px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s ease}
+.overlay.open{opacity:1;visibility:visible;pointer-events:auto}
+.modal{width:min(680px,100%);border:1px solid transparent;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.45),0 10px 30px rgba(56,189,248,.12);overflow:hidden;transform:translateY(18px) scale(.97);opacity:0;transition:transform .38s cubic-bezier(.22,1,.36,1),opacity .32s ease;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(100deg,#38bdf8,#2dd4bf,#fb923c) border-box}
+.overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
+.modalhead{display:flex;gap:10px;align-items:center;padding:16px;border-bottom:1px solid var(--line)}
+.modalhead input{flex:1;border:0;background:transparent;color:var(--text);font-size:18px;outline:none}
+.modalhead input::placeholder{color:var(--muted)}
+.clearbtn{border:0;background:transparent;color:var(--muted);font-size:18px}
+.results{max-height:420px;overflow:auto;padding:8px}
+.res{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;padding:10px;border-radius:12px;cursor:pointer;text-align:left;border:0;background:transparent;color:var(--text);width:100%}
+.res:hover,.res.hl{background:var(--card2)}
+.res b{display:block}.res span{color:var(--muted);font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.hint{padding:10px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+footer{margin:54px 0 30px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+footer a{color:var(--muted);text-decoration:none}
+.journal{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:28px;margin-top:22px}
+@media(max-width:760px){
+  .navlinks a.navlink{display:none}
+  .hero{padding:30px 22px 22px}.hero h1{font-size:40px}
+  .row{grid-template-columns:40px 72px 1fr;gap:14px}
+  .thumb{width:72px;height:72px}
+  .detailtop{grid-template-columns:1fr}.bigthumb{width:100%;height:240px;position:static}
+  .meta{grid-template-columns:1fr}
+  .brand{font-size:15px}.join{padding:8px 12px;font-size:13px}
+  main{padding-top:84px}
+}
+@media(prefers-reduced-motion:reduce){
+  .mtrack{animation:none} html{scroll-behavior:auto} *{transition:none!important} .bgtrack{animation:none} .ambdot{display:none} .mech .stepnode.on circle{animation:none} .thumb svg,.mtile svg,.bigthumb svg{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="bgtext" aria-hidden="true">
+  <div class="bgline" style="--spd:138s;font-size:5.5rem"><div class="bgtrack"><span>PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span><span aria-hidden="true">PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span></div></div>
+  <div class="bgline rev" style="--spd:106s;font-size:3rem"><div class="bgtrack"><span>PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span><span aria-hidden="true">PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span></div></div>
+  <div class="bgline" style="--spd:162s;font-size:6.5rem"><div class="bgtrack"><span>PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span><span aria-hidden="true">PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span></div></div>
+  <div class="bgline rev" style="--spd:119s;font-size:3rem"><div class="bgtrack"><span>PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span><span aria-hidden="true">PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY · PUSHING P COMMUNITY ·&nbsp;</span></div></div>
+</div>
+<div class="ambdots" id="ambdots" aria-hidden="true"></div>
+<div class="navwrap"><nav class="nav" aria-label="Main navigation">
+  <a class="brand" href="#/" id="brandLink">Pushing <span>P</span> Community</a>
+  <div class="navlinks">
+    <a class="navlink" href="#/journal" id="journalLink">Journal Club</a>
+    <a class="navlink active" href="#/" id="dbLink">Compound Database</a>
+    <button class="themepill" id="themeBtn" type="button" aria-label="Toggle dark and light mode" title="Toggle theme">🌙</button>
+    <a class="join" href="https://klixey.com/shop/" target="_blank" rel="noopener">Join Community ↗</a>
+  </div>
+</nav></div>
+<main><div class="wrap">
+  <div id="view"></div>
+  <footer>
+    <div>Educational only. Not medical advice.</div>
+    <div><a href="#/">Compound Database</a> &nbsp;·&nbsp; <a href="#/journal">Journal Club</a> &nbsp;·&nbsp; <a href="https://klixey.com/shop/" target="_blank" rel="noopener">Join Community</a></div>
+    <div>Pushing P Community</div>
+  </footer>
+</div></main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Search compounds">
+  <div class="modal">
+    <div class="modalhead"><span aria-hidden="true">🔍</span><input id="searchInput" type="text" placeholder="Search compounds..." autocomplete="off" aria-label="Search compounds"><button class="clearbtn" id="clearBtn" type="button" aria-label="Clear search">✕</button><span class="kbd">esc</span></div>
+    <div class="results" id="results" role="listbox" aria-label="Search results"></div>
+    <div class="hint">↑ ↓ to navigate &nbsp;·&nbsp; Enter to open &nbsp;·&nbsp; Esc to close &nbsp;·&nbsp; / or Ctrl/⌘+K to search</div>
+  </div>
+</div>
+<script>
+"use strict";
+/* ============ DATA — edit only this array to add, remove, or edit compounds ============
+   Fields: n = name, b = brand / alternative names as supplied, s = status flag as supplied ("" if none), d = supplied description.
+   The list below is alphabetical and the count is computed from its length. No screenshot-only compounds are included. */
+const COMPOUNDS = [
+{n:"Acetaminophen",b:"Tylenol, Mapap, Panadol",s:"",d:"A pain reliever and fever reducer, taken by mouth over the counter or given IV in the hospital. Too much, including from combination products that also contain it, can cause severe liver damage."},
+{n:"Acyclovir",b:"Zovirax",s:"",d:"An antiviral for herpes viruses. Tablets treat shingles, chickenpox, and genital herpes, and the IV form treats severe herpes infections, including herpes of the brain and herpes in newborns. It can harm the kidneys, especially when given IV, so good hydration matters."},
+{n:"Adenosine",b:"Adenocard",s:"",d:"An IV drug pushed in quickly to stop paroxysmal supraventricular tachycardia (PSVT), a sudden, very fast heart rhythm. It is cleared from the blood in seconds, so its common effects, such as flushing, shortness of breath, and a brief pause in the heartbeat, pass quickly."},
+{n:"Afamelanotide",b:"Scenesse",s:"",d:"An implant placed under the skin every 2 months for adults with erythropoietic protoporphyria, a rare inherited disorder in which sunlight causes burning skin pain. It darkens the skin by boosting the body's own pigment, which lets people spend more time in daylight without pain."},
+{n:"Albuterol",b:"Ventolin, ProAir, Proventil",s:"",d:"A quick-relief (rescue) inhaler that opens the airways during asthma symptoms or before exercise. One dose lasts about 4 to 6 hours. It does not replace controller medicines such as inhaled steroids."},
+{n:"Alendronate",b:"Fosamax, Binosto, Fosamax Plus D",s:"",d:"A bisphosphonate pill that slows bone breakdown to treat and prevent osteoporosis and treat Paget's disease of bone. It must be taken first thing in the morning with a full glass of plain water, at least 30 minutes before food, drink, or other medicines, while staying upright, to protect the esophagus."},
+{n:"Allopurinol",b:"Zyloprim",s:"",d:"A pill that lowers uric acid to prevent gout attacks, high uric acid during cancer treatment, and some repeat kidney stones. It blocks the enzyme that makes uric acid, and any rash is a reason to stop it, because rare skin reactions can be fatal."},
+{n:"Alteplase",b:"Activase",s:"",d:"A clot-dissolving drug (tPA) given by IV in the hospital. It treats acute ischemic stroke, heart attack, and massive clots in the lungs, and its main danger is bleeding."},
+{n:"Amiodarone",b:"Pacerone, Nexterone",s:"",d:"A powerful antiarrhythmic, given by mouth (Pacerone) or IV (Nexterone), for life-threatening ventricular fibrillation and unstable ventricular tachycardia when other drugs fail. It can seriously harm the lungs, liver, thyroid, and eyes, and it stays in the body for months."},
+{n:"Amitriptyline",b:"Elavil",s:"",d:"A tricyclic antidepressant taken by mouth as tablets to relieve symptoms of depression. It is sedating and has strong atropine-like effects such as dry mouth and constipation, and an overdose can cause deadly heart rhythm problems and seizures. Like other antidepressants, it carries a boxed warning about suicidal thoughts in children, teens, and young adults."},
+{n:"Amlodipine",b:"Norvasc, Katerzia, Norliqva",s:"",d:"A calcium channel blocker taken once a day. It widens arteries to lower blood pressure and to prevent chest pain from angina."},
+{n:"Amoxicillin",b:"Moxatag, Trimox",s:"",d:"A penicillin-type antibiotic taken by mouth for common bacterial infections of the ear, nose, throat, lungs, skin, and urinary tract, and as part of H. pylori treatment. It does not work against colds or other viral infections."},
+{n:"Apixaban",b:"Eliquis",s:"",d:"An oral blood thinner (a direct factor Xa inhibitor) taken twice a day. It lowers stroke risk in atrial fibrillation not caused by valve disease, prevents clots after hip or knee replacement, and treats and prevents DVT and PE. No routine blood tests are needed."},
+{n:"Aspirin",b:"Bayer Aspirin, Ecotrin, St. Joseph Aspirin, Bufferin, Durlaza, Vazalore",s:"",d:"An over-the-counter NSAID that relieves pain and fever. Taken regularly at low doses under a doctor's direction, it helps prevent heart attacks and strokes by keeping platelets from clumping. It can cause stomach bleeding, and children and teens with flu or chickenpox should not take it."},
+{n:"Atorvastatin",b:"Lipitor, Atorvaliq",s:"",d:"A statin that lowers LDL ('bad') cholesterol. Taken once a day alongside diet changes, it lowers the risk of heart attack and stroke."},
+{n:"Atropine",b:"Atropen, Isopto Atropine",s:"",d:"An injectable anticholinergic that blocks acetylcholine at muscarinic receptors. It speeds up a dangerously slow heart rate, dries secretions before and during surgery, and is the antidote for organophosphate insecticide, carbamate, and certain mushroom poisonings."},
+{n:"Azithromycin",b:"Zithromax",s:"",d:"A macrolide antibiotic for respiratory, ear, sinus, throat, skin, and sexually transmitted infections. Its long half-life allows short courses, such as a 5-day pack or a single dose. It is given by mouth or IV."},
+{n:"BPC-157",b:"",s:"Not FDA approved",d:"A short peptide derived from a protein in human gastric juice, and one of the most searched healing peptides online. Dozens of rat studies show faster repair of tendons, muscle, gut, and blood vessels, but human evidence amounts to three tiny pilot reports, and the FDA has flagged compounded versions as a safety risk. The first placebo-controlled human trial began recruiting in 2026."},
+{n:"Buprenorphine-naloxone",b:"Suboxone",s:"",d:"A film that dissolves under the tongue or inside the cheek, combining buprenorphine, a partial opioid agonist, with naloxone, an opioid blocker. It treats opioid dependence as part of a full treatment plan with counseling and support, and it is a Schedule III controlled substance."},
+{n:"Calcium gluconate",b:"",s:"",d:"An IV form of calcium given by a healthcare provider to treat a sudden, symptomatic drop in blood calcium. It is diluted and given slowly through a secure IV line, because a fast injection can slow the heart and a leak from the vein can damage the skin."},
+{n:"Carbamazepine",b:"Tegretol, Epitol",s:"",d:"An antiepileptic (anticonvulsant) taken by mouth as tablets, extended-release tablets, or a liquid suspension. It treats several seizure types and the facial nerve pain of trigeminal neuralgia. Its boxed warning covers severe skin reactions, linked to the inherited HLA-B*1502 gene variant, and rare but serious drops in blood cells."},
+{n:"Carbidopa-levodopa",b:"Sinemet, Rytary, Crexont, Duopa, Dhivy, Vyalev",s:"",d:"The main oral treatment for Parkinson's disease. Levodopa is turned into dopamine in the brain, and carbidopa keeps it from being used up in the rest of the body. It eases slowness, stiffness, and tremor, but involuntary movements, wearing off between doses, low blood pressure on standing, and hallucinations can develop."},
+{n:"Ceftriaxone",b:"No current brand name; marketed as generic ceftriaxone for injection",s:"",d:"A third-generation cephalosporin antibiotic given IV or IM, usually once a day. It treats serious infections of the lungs, ears, skin, urinary tract, bones and joints, abdomen, blood, and brain lining, as well as gonorrhea, and is given before some surgeries to prevent infection."},
+{n:"Ciprofloxacin",b:"Cipro",s:"",d:"A fluoroquinolone antibiotic taken by mouth for urinary, skin, bone and joint, abdominal, lung, and some intestinal infections, and after anthrax or plague exposure. Because it can cause disabling tendon, nerve, and brain side effects, it is reserved for cases with no other option in uncomplicated cystitis, sinusitis, and bronchitis flares."},
+{n:"CJC-1295",b:"",s:"Not FDA approved",d:"A long-acting copy of growth hormone-releasing hormone that attaches itself to albumin in the blood so a single injection keeps prompting the pituitary for about a week. Small studies in healthy adults two decades ago showed it raises growth hormone and IGF-1 for days, but its drug development stopped, it is not approved, and the FDA has flagged compounded versions as a safety risk."},
+{n:"Clonidine",b:"Catapres",s:"",d:"A blood pressure pill that acts in the brain to turn down the nerve signals that tighten blood vessels and speed the heart. It treats high blood pressure, and stopping it suddenly can make blood pressure shoot back up."},
+{n:"Clopidogrel",b:"Plavix",s:"",d:"An oral antiplatelet drug that keeps platelets from clumping. It lowers the risk of heart attack and stroke after acute coronary syndrome, a recent heart attack or stroke, or with peripheral artery disease."},
+{n:"Clozapine",b:"Clozaril",s:"",d:"An atypical (second-generation) antipsychotic taken by mouth as tablets. It is reserved for severe schizophrenia that has not responded to standard antipsychotics, and it also lowers the risk of repeated suicidal behavior in schizophrenia or schizoaffective disorder. Its boxed warnings include severe neutropenia, which requires regular blood counts, along with low blood pressure and fainting, seizures, and heart inflammation."},
+{n:"Digoxin",b:"Lanoxin, Digox",s:"",d:"A cardiac glycoside that makes the heart pump more strongly and slows the heart rate. It treats mild to moderate heart failure and controls the heart rate in chronic atrial fibrillation. The gap between helpful and toxic levels is narrow."},
+{n:"Diltiazem",b:"Cardizem",s:"",d:"A calcium channel blocker that slows the heart rate and relaxes blood vessels. Given IV in a monitored setting, it quickly slows a racing heart in atrial fibrillation or flutter and can stop PSVT; as once-daily Cardizem CD capsules, it treats high blood pressure and prevents chest pain (angina)."},
+{n:"Donepezil",b:"Aricept",s:"",d:"A once-daily tablet or orally disintegrating tablet for dementia of the Alzheimer type, at mild, moderate, or severe stages. It blocks the enzyme that breaks down acetylcholine, a chemical messenger in the brain, which can ease symptoms but has not been shown to change the course of the disease."},
+{n:"Doxycycline",b:"Vibramycin, Doryx, Acticlate, Monodox, Adoxa, Oracea, Periostat, Targadox",s:"",d:"A tetracycline antibiotic taken by mouth for many infections, including Rocky Mountain spotted fever and other tick-borne illnesses, chlamydia, some pneumonias, and anthrax exposure, and to prevent malaria. It can stain developing teeth, make skin burn easily in the sun, and irritate the esophagus, so it is taken with plenty of water and not right before lying down."},
+{n:"DSIP (delta sleep-inducing peptide)",b:"",s:"Not FDA approved",d:"A nine-amino-acid peptide isolated from rabbit brain blood in 1977 and named for an apparent ability to deepen sleep, now sold online as a sleep peptide. Small intravenous trials decades ago gave mixed results in insomnia, and no gene, precursor, or receptor for it has ever been found. It is not approved, and an FDA advisory committee voted against letting pharmacies compound it in 2026."},
+{n:"Elamipretide",b:"Forzinity",s:"",d:"A once-daily injection for people with Barth syndrome, a rare inherited disease of the mitochondria that weakens the heart and muscles. It binds a fat molecule inside mitochondria to help them work better, and it is approved to improve muscle strength in patients who weigh at least 30 kg."},
+{n:"Empagliflozin",b:"Jardiance",s:"",d:"A once-daily SGLT2 inhibitor pill that makes the kidneys pass extra sugar into the urine. It lowers blood sugar in type 2 diabetes and, in adults, lowers the risk of heart failure hospitalization, cardiovascular death, and kidney decline in heart failure and chronic kidney disease."},
+{n:"Enoxaparin",b:"Lovenox",s:"",d:"A low molecular weight heparin injected under the skin, usually once or twice a day. It prevents blood clots after surgery or during immobilizing illness, treats DVT with or without PE, and is used in unstable angina and heart attack."},
+{n:"Epinephrine",b:"Epipen, Adrenalin, Auvi-Q, Symjepi",s:"",d:"The emergency treatment for anaphylaxis, a severe allergic reaction. It is injected into the outer thigh with an auto-injector such as EpiPen, and in the hospital an IV drip raises blood pressure in septic shock. It acts within minutes but wears off quickly, so emergency care is still needed."},
+{n:"Epitalon",b:"",s:"Not FDA approved",d:"A four-amino-acid peptide modeled on a Russian pineal gland extract and sold as an anti-aging and sleep peptide. Its reputation rests on telomerase activation in cell cultures and on decades-old Russian studies of the extract it was copied from, rather than on independent trials of the peptide itself. It is not approved, and the FDA has flagged compounded epitalon as a safety risk."},
+{n:"Fluconazole",b:"Diflucan",s:"",d:"An antifungal tablet or liquid for yeast infections of the vagina, mouth, throat, and esophagus, and for cryptococcal meningitis, a fungal infection around the brain and spinal cord. It interacts with many other drugs and can rarely cause liver injury or a dangerous heart rhythm."},
+{n:"Fluticasone",b:"Flovent, Armonair, Arnuity, Flonase",s:"",d:"An inhaled corticosteroid used twice a day to control asthma and prevent attacks in people 4 and older. It does not relieve a sudden attack, which needs a rescue inhaler such as albuterol. Rinsing the mouth after each use helps prevent thrush."},
+{n:"Furosemide",b:"Lasix, Furoscix",s:"",d:"A strong 'water pill' that makes the kidneys pass more salt and water. It treats swelling from heart, liver, or kidney disease, fluid in the lungs, and high blood pressure."},
+{n:"Gabapentin",b:"Neurontin",s:"",d:"An anticonvulsant taken by mouth. It eases nerve pain after shingles (postherpetic neuralgia) and is added to other seizure medicines for partial onset seizures."},
+{n:"Gentamicin",b:"",s:"",d:"An aminoglycoside antibiotic given IV or IM for serious infections, especially from gram-negative bacteria such as Pseudomonas and E. coli. It can damage the kidneys and the inner ear, sometimes permanently, so peak and trough blood levels, kidney function, and hearing are monitored."},
+{n:"GHK-Cu",b:"",s:"Not FDA approved",d:"A copper-binding tripeptide found naturally in human plasma, widely used in cosmetics and sold online as an injectable anti-aging and healing peptide. Topical versions have small, old studies in wound healing and skin, while the FDA has flagged injectable GHK-Cu as a safety risk with limited human data."},
+{n:"Glipizide",b:"Glucotrol",s:"",d:"A sulfonylurea pill for type 2 diabetes, taken about 30 minutes before a meal along with diet and exercise. It lowers blood sugar by making the pancreas release more insulin, so low blood sugar is its main risk."},
+{n:"Glucagon",b:"GlucaGen",s:"",d:"An emergency shot for severe low blood sugar in people with diabetes, usually given by a family member or caregiver because the person is too low to treat themselves. It makes the liver release stored sugar, and it is also used in imaging to hold the gut still for X-ray exams."},
+{n:"Haloperidol",b:"Haldol",s:"",d:"A first-generation (typical) antipsychotic given as tablets or as an IM injection for rapid control of severe agitation in schizophrenia. It also controls tics in Tourette's disorder. Movement side effects are common, and it can cause dangerous heart rhythms and neuroleptic malignant syndrome."},
+{n:"Heparin (unfractionated)",b:"No current brand name; marketed as generic heparin sodium injection",s:"",d:"An injectable blood thinner given IV or under the skin, mostly in the hospital. It prevents and treats blood clots and works within minutes when given IV."},
+{n:"Hydralazine",b:"",s:"",d:"A blood vessel relaxer that lowers blood pressure by acting directly on the muscle in artery walls. Tablets treat essential high blood pressure, and the injection is for severe high blood pressure when pills cannot be taken or pressure must come down quickly."},
+{n:"Hydrochlorothiazide",b:"No current brand name for single-agent tablets or capsules; marketed as generic hydrochlorothiazide (HCTZ). RxNorm brands are mostly combination products, plus Inzirqo, an oral suspension outside this scope",s:"",d:"A thiazide 'water pill' that helps the kidneys remove extra salt and water. It treats high blood pressure and swelling from heart, liver, or kidney disease or from steroid or estrogen therapy."},
+{n:"Hydromorphone",b:"Dilaudid",s:"",d:"A strong opioid pain reliever given by injection or by mouth for pain severe enough that other treatments are not enough. Doses are much smaller than morphine doses, and mix-ups between the two have caused deadly overdoses. Like all opioids, it can slow or stop breathing and cause addiction."},
+{n:"Ibuprofen",b:"Advil, Motrin, Ibu, Genpril, Addaprin, Proprinal, Wal-Profen",s:"",d:"An NSAID that eases pain, fever, and inflammation. Prescription tablets treat arthritis, mild to moderate pain, and menstrual cramps. It can cause stomach bleeding and raises the risk of heart attack and stroke, so the lowest dose for the shortest time is used."},
+{n:"Insulin glargine",b:"Lantus",s:"",d:"A long-acting (basal) insulin injected under the skin once a day at the same time. It gives steady background insulin for about a day with no pronounced peak, lowering blood sugar in adults and children with diabetes."},
+{n:"Insulin lispro",b:"Humalog, Admelog, Lyumjev",s:"",d:"A rapid-acting mealtime insulin injected within 15 minutes before a meal or right after eating. It covers the rise in blood sugar that follows a meal and is usually paired with a longer-acting insulin. It can also run in an insulin pump or, in the hospital, by IV."},
+{n:"Insulin NPH (isophane)",b:"Humulin N",s:"",d:"An intermediate-acting human insulin, white and cloudy after mixing, injected under the skin. It lowers blood sugar in adults and children with diabetes and starts later and lasts longer than regular insulin."},
+{n:"Insulin regular (human)",b:"Humulin R, Novolin R, Myxredlin",s:"",d:"A short-acting human insulin injected under the skin before meals or given by IV drip in the hospital. It lowers blood sugar in people with diabetes."},
+{n:"Ipamorelin",b:"",s:"Not FDA approved",d:"A five-amino-acid peptide that triggers a short burst of growth hormone through the ghrelin receptor without raising cortisol or prolactin. A drug company tested it between 2008 and 2013 for sluggish bowels after surgery and stopped, and it is now sold without approval for muscle, recovery, and anti-aging claims that no trial supports."},
+{n:"Isoniazid",b:"",s:"",d:"An antibiotic pill for tuberculosis (TB). It is combined with other TB drugs to treat active disease and is also used to prevent TB in people at high risk. It can cause severe, sometimes fatal liver injury and nerve damage felt as tingling in the hands and feet."},
+{n:"KPV",b:"",s:"Not FDA approved",d:"A three-amino-acid peptide, Lys-Pro-Val, that is the tail end of the hormone alpha-MSH and calms inflammation in cell and mouse studies. It is sold online for gut inflammation, skin, and recovery, but no human trial of KPV has ever been published, and the FDA says it has no human exposure data at all."},
+{n:"Labetalol",b:"Trandate",s:"",d:"A beta blocker that also blocks alpha receptors, so it relaxes blood vessels and keeps the heart from speeding up. Tablets treat high blood pressure, and the IV form is given for severe high blood pressure."},
+{n:"Levonorgestrel-ethinyl estradiol",b:"",s:"",d:"A combined birth control pill with a progestin (levonorgestrel) and an estrogen (ethinyl estradiol), taken every day to prevent pregnancy. It works mainly by stopping ovulation, and smoking raises its risk of heart attack, stroke, and blood clots, especially after age 35."},
+{n:"Levothyroxine",b:"Synthroid, Levoxyl, Unithroid, Euthyrox, Tirosint",s:"",d:"Synthetic thyroid hormone (T4), taken once a day on an empty stomach to replace what an underactive thyroid no longer makes. It is usually taken for life."},
+{n:"Lisinopril",b:"Zestril, Prinivil, Qbrelis",s:"",d:"An ACE inhibitor taken by mouth once a day. It relaxes blood vessels to lower blood pressure, and it is also used in heart failure and after a heart attack."},
+{n:"Lithium",b:"No current brand name for immediate-release lithium carbonate; marketed as generic capsules and tablets. Lithobid is the extended-release brand, which is not covered here",s:"",d:"A mood stabilizer taken by mouth for bipolar I disorder, both to treat manic or mixed episodes and to prevent new ones. It has a narrow margin between helpful and toxic levels, so blood levels are checked regularly."},
+{n:"Lorazepam",b:"Ativan",s:"",d:"A benzodiazepine (Schedule IV controlled substance) taken by mouth for anxiety, or given IV or IM to stop status epilepticus and to sedate patients before surgery."},
+{n:"Losartan",b:"Cozaar",s:"",d:"An angiotensin receptor blocker (ARB) that relaxes blood vessels to lower blood pressure. It treats high blood pressure, lowers stroke risk in hypertension with a thickened left ventricle, and slows kidney damage from diabetes."},
+{n:"Magnesium sulfate",b:"",s:"",d:"An injectable mineral given IV or IM to prevent and stop seizures in preeclampsia and eclampsia, and to replace magnesium when levels are low. Too much causes loss of reflexes, slowed breathing, and heart problems, so reflexes, breathing, urine output, and levels are checked, and IV calcium reverses toxicity."},
+{n:"Melanotan II",b:"",s:"Not FDA approved",d:"A synthetic, long-lasting copy of the pigment hormone alpha-MSH, sold illegally online as a tanning injection and nasal spray. Small studies decades ago showed it darkens skin and triggers erections, but it hits several melanocortin receptors at once and has been linked to new and darkening moles, melanoma, kidney injury, and muscle breakdown. No regulator has approved it."},
+{n:"Metformin",b:"Glucophage, Glumetza, Riomet",s:"",d:"A pill for type 2 diabetes, used with diet and exercise. It lowers blood sugar mainly by making the liver release less glucose, and it does not cause low blood sugar on its own."},
+{n:"Methimazole",b:"",s:"",d:"A tablet for an overactive thyroid (hyperthyroidism), used for Graves' disease and toxic multinodular goiter or to calm symptoms before thyroid surgery or radioactive iodine. It blocks the thyroid from making new hormone, and its most serious risk is a sudden loss of infection-fighting white blood cells."},
+{n:"Methotrexate",b:"Trexall",s:"",d:"A pill, usually taken once a week, for rheumatoid arthritis, severe psoriasis, and juvenile arthritis, and part of chemotherapy for some blood cancers. It blocks an enzyme cells need to use folate, and taking a weekly dose every day by mistake has caused deaths."},
+{n:"Methylphenidate",b:"Ritalin",s:"",d:"A stimulant tablet (Schedule II controlled substance) for ADHD in children 6 and older and adults, and for narcolepsy. It raises dopamine and norepinephrine activity in the brain, and it carries a boxed warning for abuse, misuse, and addiction."},
+{n:"Metoprolol",b:"Lopressor, Toprol, Kapspargo",s:"",d:"A beta blocker that slows the heart and lowers blood pressure. It treats high blood pressure and angina, is used after a heart attack, and the extended-release form treats heart failure."},
+{n:"Metronidazole",b:"Flagyl, Likmez, MetroGel, MetroCream, MetroLotion, Noritate, Nuvessa, Rosadan, Vandazole",s:"",d:"An antibiotic and antiparasitic pill for trichomoniasis, amebiasis, and serious infections caused by anaerobic bacteria. Drinking alcohol during treatment and for at least three days after can cause cramps, vomiting, headache, and flushing."},
+{n:"Montelukast",b:"Singulair",s:"",d:"A once-daily oral leukotriene blocker. It is used for long-term asthma control, to prevent exercise-induced bronchoconstriction, and for allergic rhinitis when other treatments fail or are not tolerated. It does not treat an acute asthma attack."},
+{n:"Morphine",b:"MS Contin, Kadian, Duramorph, Infumorph, Mitigo",s:"",d:"A strong opioid pain reliever given by injection in the hospital or as tablets, for pain severe enough that other treatments are not enough. It can slow or stop breathing and can cause addiction."},
+{n:"MOTS-c",b:"",s:"Not FDA approved",d:"A 16-amino-acid peptide that the body's own mitochondria encode, which rises with exercise and helps muscle handle fuel. Synthetic versions sold online borrow from mouse studies showing better endurance and insulin sensitivity, but the first controlled human trial of the injected peptide only began recruiting in 2026, and the FDA has flagged compounded MOTS-c as a safety risk."},
+{n:"NAD+ precursors (NR and NMN)",b:"",s:"",d:"Nicotinamide riboside and nicotinamide mononucleotide are supplement relatives of niacin that the body converts into NAD+, a molecule every cell uses for energy production and repair. Randomized trials show they reliably raise blood NAD+ and are well tolerated, while improvements in health outcomes are small, inconsistent, or absent."},
+{n:"Naloxone",b:"Narcan, Rextovy, Zimhi",s:"",d:"An opioid antagonist that rapidly reverses opioid overdose, especially slowed or stopped breathing. It is given by injection in the hospital or as a nasal spray by family members and bystanders while waiting for emergency help."},
+{n:"Nitrofurantoin",b:"Macrobid",s:"",d:"A urinary antibiotic capsule (Macrobid) for uncomplicated bladder infections caused by E. coli or Staphylococcus saprophyticus. It is not for kidney infections, and it can cause lung, liver, and nerve reactions."},
+{n:"Nitroglycerin",b:"Nitrostat",s:"",d:"A fast-acting nitrate tablet dissolved under the tongue. It relieves an angina attack within minutes and can be taken just before activity that tends to bring on chest pain."},
+{n:"Norepinephrine",b:"Levophed",s:"",d:"A vasopressor given as a slow, continuous IV drip in the hospital to raise dangerously low blood pressure in adults. It tightens blood vessels and strengthens the heartbeat, and if it leaks out of the vein it can kill the nearby tissue."},
+{n:"Omeprazole",b:"Prilosec",s:"",d:"A proton pump inhibitor that sharply lowers stomach acid. It treats GERD and erosive esophagitis, heals duodenal and gastric ulcers, helps clear H. pylori with antibiotics, and controls rare acid-overproducing conditions such as Zollinger-Ellison syndrome."},
+{n:"Ondansetron",b:"No current brand name; marketed as generic ondansetron tablets and injection (the original brand was Zofran)",s:"",d:"An antiemetic that blocks serotonin 5-HT3 receptors. It prevents nausea and vomiting from cancer chemotherapy, radiation therapy, and surgery. It comes as tablets and as an IV or IM injection."},
+{n:"Oxytocin",b:"Pitocin",s:"",d:"A hospital injection of the hormone that makes the uterus contract. An IV drip starts or strengthens labor when there is a medical reason to deliver, and IV or IM doses after delivery control bleeding. It is given by pump with continuous monitoring of contractions and the baby's heart rate."},
+{n:"Phenytoin",b:"Dilantin, Phenytek",s:"",d:"An antiepileptic (anticonvulsant) taken by mouth as extended-release capsules. It treats tonic-clonic and temporal lobe seizures and prevents or treats seizures during or after neurosurgery. Blood levels guide dosing because small dose changes can cause big level changes."},
+{n:"Phytonadione (vitamin K)",b:"",s:"",d:"An injectable form of vitamin K1 that helps the liver make clotting factors. It reverses bleeding problems from warfarin-type blood thinners or low vitamin K, and it is given to newborns to prevent bleeding."},
+{n:"Pinealon",b:"",s:"Not FDA approved",d:"A three-amino-acid peptide, Glu-Asp-Arg, from the Russian short-peptide bioregulator program, sold online for brain protection and anti-aging. Its evidence is cell and animal work from essentially one research group, plus a small uncontrolled study in 32 older patients. It is not approved anywhere."},
+{n:"Potassium chloride",b:"K-Tab, Klor-Con",s:"",d:"A potassium salt used to treat and prevent low potassium (hypokalemia). Extended-release tablets are used when diet changes or lower diuretic doses are not enough; diluted IV potassium is used when oral replacement is not feasible."},
+{n:"Prednisone",b:"Rayos, Deltasone",s:"",d:"A corticosteroid pill that calms inflammation and the immune system. It is used for flares of asthma, arthritis, lupus, allergies, skin and eye disease, and many other conditions, usually at the lowest dose for the shortest time."},
+{n:"Quetiapine",b:"Seroquel",s:"",d:"An atypical (second-generation) antipsychotic taken by mouth. It treats schizophrenia, manic episodes of bipolar I disorder, and depressive episodes of bipolar disorder, and is used with lithium or divalproex for bipolar maintenance."},
+{n:"Retatrutide",b:"",s:"Investigational",d:"An experimental once-weekly injection that switches on three gut and pancreas hormone receptors at once: GLP-1, GIP, and glucagon. In mid-stage trials it produced some of the largest weight losses ever recorded for a drug, and late-stage trials in obesity, diabetes, sleep apnea, knee arthritis, and heart and kidney disease are under way. It is not approved anywhere."},
+{n:"Semaglutide",b:"Ozempic",s:"",d:"A once-weekly injection for adults with type 2 diabetes. It lowers blood sugar, and it also lowers the risk of heart attack, stroke, and cardiovascular death in people with heart disease, and of kidney decline in people with chronic kidney disease."},
+{n:"Semax",b:"",s:"Not FDA approved",d:"A short synthetic peptide built from a fragment of the stress hormone ACTH, used in Russia for stroke recovery and cognitive complaints. Its clinical research is older, single-country, and mostly unblinded, while international nootropic buyers get it as an unverified research chemical. It is not approved in the United States."},
+{n:"Sertraline",b:"Zoloft",s:"",d:"An SSRI antidepressant taken once a day for depression, OCD, panic disorder, PTSD, social anxiety, and PMDD. Full benefit builds over weeks."},
+{n:"SLU-PP-332",b:"",s:"Not FDA approved",d:"A research chemical that switches on the estrogen-related receptors, the gene switches muscle uses to adapt to endurance exercise. In mice it raised endurance, burned fat, and protected the heart and aging kidneys, but it has never been given to a human in a published study. Anti-doping laboratories already treat it as a doping agent."},
+{n:"SLU-PP-915",b:"",s:"Not FDA approved",d:"The follow-up to SLU-PP-332 from the same laboratory, redesigned so it works when swallowed. In mice it boosted endurance as well as the original, but like its predecessor it has never been studied in a human and is sold only as a research chemical."},
+{n:"Spironolactone",b:"Aldactone",s:"",d:"A potassium-sparing 'water pill' that blocks aldosterone. It treats heart failure with reduced ejection fraction, resistant high blood pressure, swelling from cirrhosis or nephrotic syndrome, and primary hyperaldosteronism."},
+{n:"TB-500",b:"",s:"Not FDA approved",d:"A product sold for injury recovery that contains a short fragment of thymosin beta-4, a natural protein that controls the cell skeleton and helps wounds close. The healing evidence belongs to the full-length protein in eye, skin, and heart studies rather than to the fragment, and the FDA has found no human exposure data for TB-500 at all."},
+{n:"Tesamorelin",b:"Egrifta",s:"",d:"A daily injection for adults with HIV who have lipodystrophy, a buildup of fat deep in the belly linked to HIV and its treatment. It prompts the body to release its own growth hormone, which shrinks that deep belly fat, but it is not a weight-loss drug."},
+{n:"Thymosin alpha-1",b:"",s:"Not FDA approved",d:"An immune-modulating peptide, sold as Zadaxin in some countries for chronic hepatitis B and studied in sepsis, COVID-19, vaccine response, and cancer. It has never been approved in the United States, and a 2025 trial of 1106 sepsis patients found no survival benefit. The FDA has placed compounded thymosin alpha-1 among substances with significant safety concerns."},
+{n:"Tirzepatide",b:"Mounjaro, Zepbound",s:"",d:"A once-weekly injection that acts on two gut hormone receptors. As Mounjaro it lowers blood sugar in type 2 diabetes and cuts the risk of heart attack and stroke in adults at high risk; as Zepbound it helps adults with obesity lose weight and treats moderate to severe sleep apnea in adults with obesity."},
+{n:"Trevogrumab",b:"",s:"Investigational",d:"An experimental antibody from Regeneron that blocks myostatin, the body's natural brake on muscle growth. It is being tested to help people keep muscle while they lose weight on semaglutide, after an earlier trial in age-related muscle loss. It is not approved for any use."},
+{n:"Trimethoprim-sulfamethoxazole",b:"Bactrim, Sulfatrim",s:"",d:"A combination antibiotic pill (a sulfa drug plus trimethoprim) for urinary tract infections, ear infections in children, bronchitis flares, traveler's diarrhea, shigellosis, and Pneumocystis pneumonia. Rash is common and severe skin reactions can occur; it can also raise potassium and strengthen warfarin."},
+{n:"Valproic acid",b:"",s:"",d:"An antiepileptic capsule for absence seizures and complex partial seizures, alone or with other seizure drugs. Its boxed warning covers fatal liver failure, pancreatitis, and serious harm to an unborn baby, so liver tests are checked and it is avoided in pregnancy unless nothing else works."},
+{n:"Vancomycin",b:"Vancocin",s:"",d:"A glycopeptide antibiotic given IV for serious gram-positive infections such as MRSA bloodstream, heart valve, bone, skin, and lung infections. Taken by mouth, it stays in the gut and treats C. difficile diarrhea. Kidney function, hearing, and blood levels need watching."},
+{n:"VERVE-102",b:"",s:"Investigational",d:"An experimental one-time gene-editing treatment, first developed by Verve Therapeutics and now owned by Eli Lilly, that switches off the PCSK9 gene in the liver to lower LDL cholesterol. It is being tested in adults with familial hypercholesterolemia or early coronary artery disease. It is not approved for any use."},
+{n:"Warfarin",b:"Jantoven, Coumadin",s:"",d:"An oral blood thinner that slows clot formation. It prevents and treats clots in the legs and lungs and prevents stroke from atrial fibrillation or artificial heart valves. Regular INR blood tests guide the dose."}
+];
+COMPOUNDS.sort((a,b)=>a.n.toLowerCase().localeCompare(b.n.toLowerCase()));
+COMPOUNDS.forEach((c,i)=>{ c.id = c.n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); c.num = String(i+1).padStart(3,"0"); });
+
+/* ============ Illustrations ============ */
+const PALS=[["#5d7ea6","#8a9bb0","#b0b8c2"],["#5f7d72","#8ba396","#aebbb2"],["#6b6f9a","#9a9ec0","#c2c4d4"],["#7a6a8a","#a394b5","#c4bccc"],["#6d8296","#93a5b5","#bcc4cd"],["#7d7a68","#a3a08c","#c2bfb2"],["#5f7f8a","#8aa5ae","#b5c3c8"],["#846a5f","#a8938a","#c4b8b1"],["#4f6f7d","#7d98a3","#aabcc4"],["#707a5e","#98a186","#bcc2ae"]];
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0}return h}
+function pal(c){return PALS[hash(c.n)%PALS.length]}
+/* Each alphabetical category gets its own atom color design, derived from its letter. */
+function groupKeyOf(c){ const ch=(c.n.match(/[A-Za-z0-9]/)||["?"])[0]; return /[0-9]/.test(ch)?"0–9":ch.toUpperCase(); }
+function groupColors(key){
+  if(key==="0–9") return ["#9aa3b5","#cbd5e1","#64748b","#e2e8f0","#94a3b8"];
+  const idx=key.charCodeAt(0)-65, base=(idx*47)%360, h2=x=>`hsl(${(base+x)%360},70%,60%)`;
+  return [h2(0),h2(40),h2(80),h2(130),h2(200),h2(260)];
+}
+function iconSVG(c,size,groupKey){
+  const h=hash(c.n);
+  const ATOM=groupColors(groupKey||groupKeyOf(c));
+  const GRAY="#9aa3b5";
+  // Five molecule layouts, up to 7 bonds, all kept inside 14–88 so every sphere and bond fits the square at any size.
+  // Denser molecules use smaller spheres so they still fit nicely.
+  const LAYOUTS=[
+    {atoms:[[24,68,12],[44,36,10],[64,64,13],[82,34,9]],bonds:[[0,1],[1,2],[2,3]]},
+    {atoms:[[50,52,14],[24,28,10],[76,28,10],[50,82,10]],bonds:[[0,1],[0,2],[0,3]]},
+    {atoms:[[50,24,10],[24,42,10],[34,71,10],[66,71,10],[76,42,10]],bonds:[[0,1],[1,2],[2,3],[3,4],[4,0]]},
+    {atoms:[[18,70,10],[32,38,9],[48,66,10],[62,34,9],[78,62,10],[88,30,8],[48,86,8]],bonds:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,6]]},
+    {atoms:[[50,50,11],[24,30,9],[76,30,9],[24,70,9],[76,70,9],[50,20,8],[50,82,8],[86,50,8]],bonds:[[0,1],[0,2],[0,3],[0,4],[1,5],[3,6],[2,7]]}
+  ];
+  const L=LAYOUTS[h%LAYOUTS.length];
+  const col=i=>ATOM[(h+i)%ATOM.length];
+  let parts=`<rect width="100" height="100" rx="16" fill="rgba(125,151,189,.07)" stroke="url(#ppg)" stroke-width="1.5"/><defs><linearGradient id="ppg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="50%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#fb923c"/></linearGradient></defs>`;
+  L.bonds.forEach(b=>{ const a=L.atoms[b[0]],d=L.atoms[b[1]]; parts+=`<line x1="${a[0]}" y1="${a[1]}" x2="${d[0]}" y2="${d[1]}" stroke="${GRAY}" stroke-width="3" stroke-linecap="round"/>`; });
+  L.atoms.forEach((a,i)=>{ parts+=`<circle cx="${a[0]}" cy="${a[1]}" r="${a[2]}" fill="${col(i)}"/><circle cx="${a[0]-3}" cy="${a[1]-3}" r="${Math.max(2,Math.round(a[2]*0.28))}" fill="#ffffff" opacity=".55"/>`; });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${esc(c.n)} molecular illustration">${parts}</svg>`;
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function badge(c){ if(!c.s) return ""; const cls=c.s==="Investigational"?"inv":"warn"; return `<span class="badge ${cls}">${esc(c.s)}</span>`; }
+function brandLine(c){ return c.b ? (c.b.startsWith("No current")? esc(c.b) : `Known brand names include ${esc(c.b)}.`) : ""; }
+
+/* ============ Mechanism steps ============ */
+const SPECIFIC={
+ "retatrutide":[
+   {t:"Step 1 — Weekly injection",d:"Retatrutide is given as a once-weekly injection, as described in the supplied summary."},
+   {t:"Step 2 — GLP-1 receptor",d:"It switches on the GLP-1 receptor, one of three gut and pancreas hormone receptors named in the summary."},
+   {t:"Step 3 — GIP receptor",d:"It also switches on the GIP receptor, the second of the three named receptors."},
+   {t:"Step 4 — Glucagon receptor",d:"It also switches on the glucagon receptor. The combined triple-receptor activity is the mechanism described in the summary; individual effect sizes by receptor are not stated in the supplied data."}],
+ "tirzepatide":[
+   {t:"Step 1 — Weekly injection",d:"Tirzepatide is given as a once-weekly injection, as described in the supplied summary."},
+   {t:"Step 2 — Dual receptor activity",d:"It acts on two gut hormone receptors, GLP-1 and GIP, as described in the supplied summary."},
+   {t:"Step 3 — Clinical effects",d:"As Mounjaro it lowers blood sugar in type 2 diabetes; as Zepbound it helps adults with obesity lose weight and treats moderate to severe sleep apnea in adults with obesity, as described in the supplied summary."}],
+ "semaglutide":[
+   {t:"Step 1 — Weekly injection",d:"Semaglutide is given as a once-weekly injection, as described in the supplied summary."},
+   {t:"Step 2 — GLP-1 receptor signaling",d:"It acts through GLP-1 receptor signaling, the mechanism named for this class in the supplied brief."},
+   {t:"Step 3 — Effects described",d:"It lowers blood sugar and, in the populations described in the summary, lowers cardiovascular and kidney risks. Specific trial numbers are not included in the supplied data and are not added here."}],
+ "ghk-cu":[
+   {t:"Step 1 — Copper binding",d:"GHK-Cu is a copper-binding tripeptide found naturally in human plasma, as described in the supplied summary."},
+   {t:"Step 2 — Studied cellular signaling",d:"Topical versions have small, old studies in wound healing and skin. This animation shows the general copper-binding concept only."},
+   {t:"Step 3 — Limits",d:"Injectable GHK-Cu has limited human data and has been flagged by the FDA as a safety risk, as described in the supplied summary. No proven injectable pathway is depicted as established."}],
+ "bpc-157":[
+   {t:"Step 1 — Proposed, not proven",d:"BPC-157 is described in the supplied summary as a short peptide from a protein in human gastric juice. Human evidence is limited to three tiny pilot reports."},
+   {t:"Step 2 — Animal findings only",d:"Dozens of rat studies show faster repair of tendons, muscle, gut, and blood vessels. These are animal findings, not established human effects."},
+   {t:"Step 3 — Uncertainty",d:"The first placebo-controlled human trial began recruiting in 2026, and the FDA has flagged compounded versions as a safety risk. No human mechanism is depicted as proven here."}]
+};
+function mechSteps(c){
+  if(SPECIFIC[c.id]) return SPECIFIC[c.id];
+  return [
+    {t:"Step 1 — Delivery",d:"The compound reaches the body by the route described in its supplied summary."},
+    {t:"Step 2 — Action described",d:esc(c.d)},
+    {t:"Step 3 — Outcome and limits",d:"Effects and limits are only those described in the supplied summary. Specific receptor-level steps have not yet been compiled or verified for this compound, so no detailed pathway is depicted as established."}];
+}
+let mech={steps:[],i:0,playing:false,timer:null};
+function mechSVG(c,steps){
+  const n=steps.length, W=640, gap=W/(n+1);
+  let nodes="", dots="";
+  steps.forEach((s,i)=>{ const x=Math.round(gap*(i+1)); nodes+=`<g class="stepnode ${i===0?"on":"dim"}" data-node="${i}"><circle cx="${x}" cy="90" r="30" fill="${pal(c)[(i+1)%3]}"/><text x="${x}" y="96" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">${i+1}</text><text x="${x}" y="150" text-anchor="middle" font-size="13" fill="currentColor">${esc(s.t.replace(/^Step \d+ — /,""))}</text></g>`; });
+  dots=`<circle class="dot" r="7" fill="#e8ecf2"><animateMotion dur="4s" repeatCount="indefinite" path="M ${gap} 90 L ${W-gap} 90"/></circle><circle class="dot" r="5" fill="#8fa8c8"><animateMotion dur="4s" begin="2s" repeatCount="indefinite" path="M ${gap} 90 L ${W-gap} 90"/></circle>`;
+  return `<svg id="mechSvg" viewBox="0 0 640 190" aria-label="Mechanism animation for ${esc(c.n)}"><line x1="${gap}" y1="90" x2="${W-gap}" y2="90" stroke="#888" stroke-width="2" stroke-dasharray="7 6"/>${nodes}${dots}</svg>`;
+}
+function setMechStep(i){
+  const st=mech.steps; if(!st.length) return;
+  mech.i=(i+st.length)%st.length;
+  document.querySelectorAll("#mechBox .stepnode").forEach(el=>{ el.classList.toggle("on",+el.dataset.node===mech.i); el.classList.toggle("dim",+el.dataset.node!==mech.i); });
+  const cap=document.getElementById("mechCap"), cnt=document.getElementById("mechCount");
+  if(cap) cap.innerHTML=`<b>${esc(st[mech.i].t)}.</b> ${st[mech.i].d}`;
+  if(cnt) cnt.textContent=`Step ${mech.i+1} of ${st.length}`;
+}
+function mechAuto(){ clearInterval(mech.timer); if(mech.playing && !window.matchMedia("(prefers-reduced-motion: reduce)").matches){ mech.timer=setInterval(()=>setMechStep(mech.i+1),3800); } }
+function bindMech(c){
+  mech.steps=mechSteps(c); mech.i=0; mech.playing=false;
+  const svg=document.getElementById("mechSvg");
+  const playBtn=document.getElementById("mechPlay");
+  document.getElementById("mechPrev").onclick=()=>{mech.playing=false;playBtn.textContent="▶ Play";mechAuto();setMechStep(mech.i-1)};
+  document.getElementById("mechNext").onclick=()=>{mech.playing=false;playBtn.textContent="▶ Play";mechAuto();setMechStep(mech.i+1)};
+  document.getElementById("mechRestart").onclick=()=>{ if(svg) svg.setCurrentTime(0); setMechStep(0)};
+  playBtn.onclick=()=>{ mech.playing=!mech.playing; playBtn.textContent=mech.playing?"⏸ Pause":"▶ Play"; if(svg){ mech.playing?svg.unpauseAnimations():svg.pauseAnimations(); } mechAuto(); };
+  setMechStep(0);
+}
+
+/* ============ Views ============ */
+const view=document.getElementById("view");
+function listView(){
+  const tiles=COMPOUNDS.slice(0,36).map(c=>`<div class="mtile" title="${esc(c.n)}">${iconSVG(c,64,groupKeyOf(c))}</div>`).join("");
+  // Group alphabetically by first character; digit-initial compounds go under Numbers (0–9).
+  const groups={};
+  COMPOUNDS.forEach(c=>{ const ch=(c.n.match(/[A-Za-z0-9]/)||["?"])[0]; const key=/[0-9]/.test(ch)?"0–9":ch.toUpperCase(); (groups[key]=groups[key]||[]).push(c); });
+  const keys=Object.keys(groups).sort((a,b)=>{ if(a==="0–9") return -1; if(b==="0–9") return 1; return a.localeCompare(b); });
+  const rowHtml=(c,i,k)=>`<a class="row" href="#/compound/${c.id}"><span class="num">${c.num}</span><span class="thumb" style="--molDelay:${((i%7)*0.7).toFixed(1)}s">${iconSVG(c,96,k)}</span><span><h3>${esc(c.n)}${badge(c)}</h3><p>${esc(c.d)}</p>${c.b?`<div class="brands">${brandLine(c)}</div>`:""}</span></a>`;
+  const groupsHtml=keys.map((k,i)=>{
+    const label=k==="0–9"?"Numbers":k;
+    const tileClass=k==="0–9"?"sky":((k.charCodeAt(0)-65)%2===0?"sky":"deep");
+    const collapsed=i===0?"":" collapsed";
+    const expanded=i===0?"true":"false";
+    return `<section class="group${collapsed}" id="group-${k}"><button type="button" class="grouphead ${tileClass}" aria-expanded="${expanded}" aria-controls="group-body-${k}"><span><span class="gletter">${esc(label)}</span> <span class="gcount">· ${groups[k].length} compound${groups[k].length===1?"":"s"}</span></span><span class="chev" aria-hidden="true">▼</span></button><div class="group-body" id="group-body-${k}"><div>${groups[k].map((c,i)=>rowHtml(c,i,k)).join("")}</div></div></section>`;
+  }).join("");
+  view.innerHTML=`<section class="hero"><h1><span class="grad">A deep dive into</span><br>every compound we track.</h1><p>For education only. Nothing here is professional medical advice. Talk to a licensed clinician before starting, stopping, or changing any treatment.</p><div class="marquee" aria-hidden="true"><div class="mtrack">${tiles}${tiles}</div></div></section>
+  <div class="searchbar" id="openSearch" role="button" tabindex="0" aria-label="Open search"><span aria-hidden="true">🔍</span><input type="text" placeholder="Search compounds..." readonly aria-label="Search compounds"><span class="kbd">/</span><span class="kbd">Ctrl K</span></div>
+  <div class="sechead"><h2>Compounds</h2><span class="count">${COMPOUNDS.length} compounds</span></div>
+  <div class="grouptools"><button type="button" id="expandAll">Expand all</button><button type="button" id="collapseAll">Collapse all</button></div>
+  <div>${groupsHtml}</div>
+  <p class="note" style="margin-top:28px">For education only. Not medical advice. Talk to a licensed clinician before starting, stopping, or changing any treatment.</p>`;
+  document.getElementById("openSearch").addEventListener("click",openModal);
+  document.getElementById("openSearch").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openModal()}});
+  view.querySelectorAll(".grouphead").forEach(btn=>{ btn.addEventListener("click",()=>{ const g=btn.closest(".group"); const now=g.classList.toggle("collapsed"); btn.setAttribute("aria-expanded",String(!now)); }); });
+  document.getElementById("expandAll").addEventListener("click",()=>{ view.querySelectorAll(".group").forEach(g=>g.classList.remove("collapsed")); view.querySelectorAll(".grouphead").forEach(b=>b.setAttribute("aria-expanded","true")); });
+  document.getElementById("collapseAll").addEventListener("click",()=>{ view.querySelectorAll(".group").forEach(g=>g.classList.add("collapsed")); view.querySelectorAll(".grouphead").forEach(b=>b.setAttribute("aria-expanded","false")); });
+}
+function journalView(){
+  view.innerHTML=`<section class="journal"><h1 style="font-size:38px;letter-spacing:-.02em;margin:0 0 10px">Journal Club</h1><p>No Journal Club articles were supplied with this database build, so no articles, links, or summaries have been invented here.</p><p>When you supply Journal Club content, it can be added to this page without changing the compound database.</p><p><a href="#/">← Back to Compound Database</a></p></section>`;
+}
+function detailView(c){
+  const steps=mechSteps(c);
+  const genericNote = SPECIFIC[c.id] ? "" : `<p class="note">Specific receptor-level mechanism steps have not yet been compiled or verified for this compound in the supplied data. The animation below shows only the general flow described in the summary, not a proven pathway.</p>`;
+  view.innerHTML=`<nav class="crumb" aria-label="Breadcrumb"><a href="#/">Compound Database</a> → <a href="#/">All Compounds</a> → ${esc(c.n)}</nav>
+  <div class="detailtop"><div class="bigthumb">${iconSVG(c,220,groupKeyOf(c))}</div><div>
+    <h1>${esc(c.n)}${badge(c)}</h1><p style="font-size:19px">${esc(c.d)}</p>
+    ${c.b?`<p><b>Alternative / brand names:</b> ${brandLine(c)}</p>`:"<p><b>Alternative / brand names:</b> None supplied.</p>"}
+    <div class="meta">
+      <div class="metabox"><b>Compound classification</b>${c.s?esc(c.s):"Not specified in supplied data"}</div>
+      <div class="metabox"><b>Primary biological targets</b>${SPECIFIC[c.id]?"See “How it works” below.":"Not specified in supplied data"}</div>
+      <div class="metabox"><b>Regulatory status</b>${c.s?esc(c.s):"Not specified as a separate flag in the supplied data"}</div>
+      <div class="metabox"><b>Database position</b>${c.num} of ${COMPOUNDS.length}</div>
+    </div>
+  </div></div>
+  <section class="block"><h2>1. How it works</h2>${genericNote}<div class="mech" id="mechBox">${mechSVG(c,steps)}<div class="controls"><button type="button" id="mechPrev">← Previous step</button><button type="button" class="primary" id="mechPlay">▶ Play</button><button type="button" id="mechNext">Next step →</button><button type="button" id="mechRestart">↺ Restart</button><span class="cap" id="mechCap"></span><span id="mechCount" style="color:var(--muted);font-weight:700"></span></div></div></section>
+  <section class="block"><h2>2. What it's for</h2><p>${esc(c.d)}</p></section>
+  <section class="block"><h2>3. Where the evidence stands</h2><p class="note">Evidence details beyond the supplied summary have not yet been compiled or verified for this compound. No studies, statistics, or results have been added beyond the supplied description.</p><p>${esc(c.d)}</p></section>
+  <section class="block"><h2>4. Side effects</h2><p class="note">Side-effect information beyond what appears in the supplied summary has not yet been compiled separately for this compound. Check the summary above for any risks mentioned there, and talk to a licensed clinician.</p></section>
+  <section class="block"><h2>5. Regulatory status</h2><p>${c.s?`<b>${esc(c.s)}.</b> This flag is exactly as supplied for this compound.`:"Regulatory status was not specified as a separate flag in the supplied data for this compound."}</p></section>
+  <section class="block"><h2>6. Scientific references</h2><p class="note">No separate reference list was supplied with this compound. No sources or links have been invented here.</p><ul class="refs"><li>Supplied compound description (see “What it's for” above).</li></ul></section>
+  <p><a href="#/">← Back to all compounds</a></p>`;
+  bindMech(c);
+}
+function render(){
+  const h=location.hash||"#/";
+  document.getElementById("dbLink").classList.toggle("active",h==="#/"||h.startsWith("#/compound/"));
+  document.getElementById("journalLink").classList.toggle("active",h==="#/journal");
+  if(h==="#/journal"){ journalView(); }
+  else if(h.startsWith("#/compound/")){ const c=COMPOUNDS.find(x=>x.id===h.replace("#/compound/","")); if(c) detailView(c); else listView(); }
+  else listView();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",render);
+
+/* ============ Search modal ============ */
+const overlay=document.getElementById("overlay"), input=document.getElementById("searchInput"), resultsEl=document.getElementById("results");
+let hl=-1, cur=[];
+function openModal(){ overlay.classList.add("open"); input.value=""; renderResults(""); setTimeout(()=>input.focus(),0); }
+function closeModal(){ overlay.classList.remove("open"); }
+function renderResults(q){
+  q=q.trim().toLowerCase();
+  cur = q ? COMPOUNDS.filter(c=>(c.n+" "+c.b+" "+c.d).toLowerCase().includes(q)) : COMPOUNDS.slice();
+  hl = cur.length?0:-1;
+  if(!cur.length){ resultsEl.innerHTML=`<div class="empty">No matching compounds.<br>Try a different name, brand name, or keyword.</div>`; return; }
+  resultsEl.innerHTML=cur.map((c,i)=>`<button type="button" class="res ${i===hl?"hl":""}" data-id="${c.id}"><span style="width:48px;height:48px;display:grid;place-items:center">${iconSVG(c,48,groupKeyOf(c))}</span><span><b>${esc(c.n)}${c.s?` — ${esc(c.s)}`:""}</b><span>${c.b?esc(c.b):""} ${esc(c.d.split(".")[0])}.</span></span></button>`).join("");
+  resultsEl.querySelectorAll(".res").forEach(el=>{ el.addEventListener("click",()=>{ closeModal(); location.hash="#/compound/"+el.dataset.id; }); el.addEventListener("mouseenter",()=>{ hl=[...resultsEl.querySelectorAll(".res")].indexOf(el); paintHl(); }); });
+}
+function paintHl(){ resultsEl.querySelectorAll(".res").forEach((el,i)=>el.classList.toggle("hl",i===hl)); }
+input.addEventListener("input",()=>renderResults(input.value));
+input.addEventListener("keydown",e=>{
+  if(e.key==="ArrowDown"){e.preventDefault(); if(cur.length) hl=(hl+1)%cur.length; paintHl(); resultsEl.querySelectorAll(".res")[hl]?.scrollIntoView({block:"nearest"});}
+  else if(e.key==="ArrowUp"){e.preventDefault(); if(cur.length) hl=(hl-1+cur.length)%cur.length; paintHl(); resultsEl.querySelectorAll(".res")[hl]?.scrollIntoView({block:"nearest"});}
+  else if(e.key==="Enter"){ if(cur[hl]){ closeModal(); location.hash="#/compound/"+cur[hl].id; } }
+  else if(e.key==="Escape"){ closeModal(); }
+});
+document.getElementById("clearBtn").addEventListener("click",()=>{ input.value=""; renderResults(""); input.focus(); });
+overlay.addEventListener("click",e=>{ if(e.target===overlay) closeModal(); });
+document.addEventListener("keydown",e=>{
+  const tag=(e.target.tagName||"").toLowerCase();
+  if((e.key==="/" && tag!=="input" && tag!=="textarea") || ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="k")){ e.preventDefault(); openModal(); }
+  if(e.key==="Escape") closeModal();
+});
+
+/* ============ Ambient dots (60lbs page background language) ============ */
+(function(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const dots=document.getElementById("ambdots"); if(!dots) return;
+  const cols=["#38bdf8","#2dd4bf","#fb923c"];
+  for(let i=0;i<42;i++){
+    const d=document.createElement("span"); d.className="ambdot";
+    const s=(1.4+Math.random()*2.2).toFixed(1);
+    d.style.width=d.style.height=s+"px";
+    d.style.left=(Math.random()*100)+"%";
+    d.style.top=(Math.random()*100)+"%";
+    d.style.background=cols[i%3];
+    d.style.animationDuration=(2.8+Math.random()*3)+"s";
+    d.style.animationDelay=(Math.random()*3)+"s";
+    dots.appendChild(d);
+  }
+})();
+
+/* ============ Theme ============ */
+const themeBtn=document.getElementById("themeBtn");
+function applyTheme(t){ document.documentElement.setAttribute("data-theme",t); themeBtn.textContent=t==="dark"?"🌙":"☀️"; try{localStorage.setItem("ppc-theme",t)}catch(e){} }
+let saved="dark"; try{saved=localStorage.getItem("ppc-theme")||"dark"}catch(e){}
+applyTheme(saved);
+themeBtn.addEventListener("click",()=>applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark"));
+
+render();
+
+/* ============ Random 180° molecule rotation, every 45 seconds, expanded categories only ============ */
+if(!window.__molTimer){
+  window.__molTimer=setInterval(()=>{
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const thumbs=[...document.querySelectorAll(".group:not(.collapsed) .row .thumb")];
+    if(!thumbs.length) return;
+    const shuffled=[...thumbs].sort(()=>Math.random()-0.5);
+    const count=Math.min(8,Math.max(1,Math.round(thumbs.length*0.2)));
+    shuffled.slice(0,count).forEach(t=>t.classList.toggle("flipped"));
+  },45000);
+}
+</script>
+</body>
+</html>
